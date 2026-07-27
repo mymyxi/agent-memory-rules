@@ -1,12 +1,14 @@
-# Claude Agent Memory System
+# AI Agent Memory System
 
-> A battle-tested methodology for persistent memory management in Claude Agents
+> A battle-tested methodology for persistent memory management in AI Agents
 
 [中文文档](README_CN.md)
 
 ## 🎯 What is this?
 
-A complete configuration ruleset for Claude Agent memory systems that enables persistent memory capabilities across conversations. Through structured memory classification, standardized storage formats, and clear usage principles, your AI assistant can remember important information and continuously optimize collaboration.
+A complete configuration ruleset for AI Agent memory systems that enables persistent memory capabilities across conversations. Through structured memory classification, standardized storage formats, and clear usage principles, your AI assistant can remember important information and continuously optimize collaboration.
+
+**Supported Platforms:** Claude Code / Codex / Kimi Work / Workbuddy / Any file-system enabled Agent
 
 ## ✨ Key Features
 
@@ -20,14 +22,23 @@ A complete configuration ruleset for Claude Agent memory systems that enables pe
 
 ### 1. Create Memory Directory Structure
 
+Choose the path based on your Agent platform:
+
+**Claude Code:**
 ```bash
 mkdir -p ~/.claude/projects/-Users-yourname/memory/{core,projects,ideas,diary,weekly}
 cd ~/.claude/projects/-Users-yourname/memory
 ```
 
+**Workbuddy / Kimi Work / Others:**
+```bash
+mkdir -p ~/agent-memory/{core,projects,ideas,diary,weekly}
+cd ~/agent-memory
+```
+
 ### 2. Copy Core Configuration
 
-Add the content from `skill/memory-system.md` to your Claude system prompt.
+Add the content from `skill/memory-system.md` to your Agent system configuration (system prompt/instructions/config file).
 
 ### 3. Create Memory Index
 
@@ -110,6 +121,6 @@ This memory system has been refined over 6+ months in real projects. Thanks to a
 
 ---
 
-**Get Started:** Copy `skill/memory-system.md` to your Claude system prompt  
+**Get Started:** Copy `skill/memory-system.md` to your Agent system configuration  
 **Need Help:** Check `examples/` for complete examples  
 **Learn More:** Read detailed documentation in `skill/memory-system.md`

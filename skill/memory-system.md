@@ -1,13 +1,20 @@
-# Claude Agent Memory System Configuration
+# AI Agent Memory System Configuration
 
 ## Overview
 
-This is a persistent, file-based memory system that allows Claude to maintain context across conversations. The memory lives at a designated project directory and follows structured classifications and storage formats.
+This is a persistent, file-based memory system that allows AI Agents to maintain context across conversations. The memory lives at a designated project directory and follows structured classifications and storage formats.
+
+**Supported Platforms:** Claude Code / Codex / Kimi Work / Workbuddy / Any file-system enabled Agent
 
 ## Memory Directory Structure
 
+**Example path (adjust based on your Agent platform):**
+
+**Claude Code:** `~/.claude/projects/-Users-{username}/memory/`  
+**Workbuddy / Kimi Work / Others:** `~/agent-memory/`
+
 ```
-~/.claude/projects/-Users-{username}/memory/
+{memory-root-path}/
 ├── MEMORY.md                    # Index file (auto-loaded, first 200 lines)
 ├── core/                        # Unchanging foundational information
 │   ├── user_*.md
@@ -103,7 +110,7 @@ This is a persistent, file-based memory system that allows Claude to maintain co
 ❌ **Code patterns, conventions, architecture** - derive from current project state  
 ❌ **Git history, recent changes** - use `git log` / `git blame`  
 ❌ **Debugging solutions** - the fix is in the code, context in commit message  
-❌ **Content already in CLAUDE.md or project docs**  
+❌ **Content already in Agent config files or project docs**  
 ❌ **Ephemeral task details** - in-progress work, temporary state, current conversation context
 
 **Note:** These exclusions apply even when user explicitly asks to save. If asked to save activity summaries, ask what was *surprising* or *non-obvious* - that's what's worth keeping.

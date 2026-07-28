@@ -12,8 +12,10 @@
 
 - **🗂️ 五层分类体系**：Core（不变基础信息）/ Projects（项目状态）/ Ideas（点子库）/ Diary（每日流水）/ Weekly（周报归档）
 - **📝 四种记忆类型**：user（用户画像）/ feedback（协作反馈）/ project（项目状态）/ reference（外部资源引用）
-- **🔍 智能检索机制**：通过 MEMORY.md 索引快速定位相关记忆
+- **🎨 情绪标签**（可选）：灵感来自《头脑特工队》，用情绪给记忆打优先级标签——乐乐/忧忧/怒怒/厌厌/怕怕/焦焦 + 乐乐·勇转化态
+- **🔍 智能检索机制**：通过 MEMORY.md 索引快速定位 + 情绪触发的主动调取
 - **⏰ 时效性管理**：记忆带时间戳，过期信息自动提示验证
+- **🧹 遗忘清理机制**：四级强度分级（S+/S/A/B），自动清理过期记忆
 - **🛡️ 隐私保护**：明确什么该记、什么不该记，避免敏感信息泄露
 
 ## 🚀 快速开始
@@ -37,6 +39,10 @@ cd ~/agent-memory
 ### 2. 复制核心配置文件
 
 将 `skill/memory-system.md` 的内容添加到你的 Agent 系统配置中（系统提示词/instructions/配置文件）。
+
+### 3.（可选）添加情绪标签层
+
+如果需要更智能的记忆优先级管理，将 `skill/emotion-system.md` 也添加到系统配置中。这会让你的 Agent 具备情绪标记、主动调取相关记忆、自动清理过期记忆的能力。
 
 ### 3. 创建记忆索引文件
 
@@ -129,7 +135,8 @@ agent-memory-rules/
 ├── README.md              # 英文说明
 ├── README_CN.md           # 中文说明（本文件）
 ├── skill/
-│   └── memory-system.md   # 核心配置规则（添加到系统提示词）
+│   ├── memory-system.md   # 核心记忆配置规则（添加到系统提示词）
+│   └── emotion-system.md  # 可选：情绪标签层
 ├── templates/             # 记忆模板
 │   ├── user_template.md
 │   ├── feedback_template.md
@@ -160,5 +167,6 @@ MIT License
 ---
 
 **开始使用：** 从 `skill/memory-system.md` 复制配置到你的 Agent 系统配置  
+**进阶增强：** 添加 `skill/emotion-system.md` 获得情绪标签能力  
 **遇到问题：** 查看 `examples/` 目录的完整示例  
 **深入了解：** 阅读 `skill/memory-system.md` 中的详细说明

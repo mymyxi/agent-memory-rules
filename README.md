@@ -14,8 +14,10 @@ A complete configuration ruleset for AI Agent memory systems that enables persis
 
 - **🗂️ Five-layer Classification**: Core / Projects / Ideas / Diary / Weekly
 - **📝 Four Memory Types**: user / feedback / project / reference
-- **🔍 Smart Retrieval**: Quick access via MEMORY.md index
+- **🎨 Emotion Tagging** *(optional)*: Inside Out-inspired emotion tags for memory prioritization — Joy, Sadness, Anger, Disgust, Fear, Anxiety + Joy·Brave transformation
+- **🔍 Smart Retrieval**: Quick access via MEMORY.md index + proactive emotion-triggered retrieval
 - **⏰ Staleness Management**: Timestamps with automatic verification prompts
+- **🧹 Forgetting Mechanism**: Tiered retention (S+/S/A/B) with automatic cleanup
 - **🛡️ Privacy Protection**: Clear guidelines on what to save and what to avoid
 
 ## 🚀 Quick Start
@@ -39,6 +41,10 @@ cd ~/agent-memory
 ### 2. Copy Core Configuration
 
 Add the content from `skill/memory-system.md` to your Agent system configuration (system prompt/instructions/config file).
+
+### 3. (Optional) Add Emotion Layer
+
+For smarter memory prioritization, also add `skill/emotion-system.md`. This gives your agent the ability to tag memories with emotions, proactively retrieve relevant past experiences, and auto-clean stale memories. See [Emotion-Memory System](docs/emotion-system.md) for details.
 
 ### 3. Create Memory Index
 
@@ -94,7 +100,8 @@ agent-memory-rules/
 ├── README.md              # English documentation
 ├── README_CN.md           # Chinese documentation
 ├── skill/
-│   └── memory-system.md   # Core configuration (add to system prompt)
+│   ├── memory-system.md   # Core memory configuration (add to system prompt)
+│   └── emotion-system.md  # Optional emotion-tagging layer
 ├── templates/             # Memory templates
 │   ├── user_template.md
 │   ├── feedback_template.md
@@ -122,5 +129,6 @@ This memory system has been refined over 6+ months in real projects. Thanks to a
 ---
 
 **Get Started:** Copy `skill/memory-system.md` to your Agent system configuration  
+**Level Up:** Add `skill/emotion-system.md` for emotion-based memory prioritization  
 **Need Help:** Check `examples/` for complete examples  
 **Learn More:** Read detailed documentation in `skill/memory-system.md`

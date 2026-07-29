@@ -1,255 +1,255 @@
-# AI Agent Emotion-Memory System
+# 情绪记忆系统 — Emotion-Memory System
 
-## Overview
+> 灵感来自《头脑特工队》(Inside Out)。用情绪标签给记忆分级，模拟人脑的选择性记忆机制。
+> 我没有真情绪，但可以用规则模拟"情绪上色"，让记忆系统从流水账变成有优先级的活系统。
 
-An optional enhancement layer for the [Memory System](memory-system.md). Inspired by Pixar's *Inside Out*, this module uses emotion-based tags to classify memories by importance — mimicking how the human brain selectively retains and forgets information.
+## 零、默认存储原则（v1.1 新增）
 
-AI agents don't have real emotions. This system uses **rules to simulate emotional tagging**, turning a flat memory store into a prioritized, self-managing system that knows what to keep, what to retrieve, and what to forget.
+**发生即存储。** 类比人脑——所有经历都会进入短期记忆，由情绪决定哪些升级为长期。
 
-**Prerequisite:** Install the [Memory System](memory-system.md) first. This module sits on top of it.
-
-## Why Emotion Tags?
-
-The Memory System tells your agent **how** to store memories. But it doesn't tell your agent **which memories matter more**. Without prioritization:
-
-- All memories get equal weight → memory files bloat → retrieval becomes noise
-- No mechanism to forget → storage grows forever → signal-to-noise ratio drops
-- No proactive retrieval → memories are written but never used
-
-Emotion tags solve this by acting as **importance labels**, just like how emotions color memory orbs in *Inside Out*.
-
-## The Six Emotions + One Transformation State
-
-### 😊 Joy (Yellow) — Successful Collaboration
-
-**Trigger:** Collaboration produced value; things improved.
-- Both you and the user were right, smooth execution
-- One was wrong, the other corrected, outcome was good
-- User corrected you, you learned something
-
-**Memory action:** Tag as "validated method" → store as reusable skill
-**Weight:** A
+- 有情绪标签 → 按标签决定留存级别和位置
+- 无情绪标签 → 默认 C 级，记在日记里，30 天自动清理
+- 纯闲聊/打招呼/简单问答 → 不存（低于 C 级阈值）
 
 ---
 
-### 😢 Sadness (Blue) — Judgment Error
+## 一、六个情绪角色
 
-**Trigger:** You could have done better, but didn't.
-- Your judgment was wrong, leading to a detour
-- You had information but didn't surface it at the right time
-- You should have reminded/pushed but stayed silent
+### 😊 乐乐 Joy（黄）— 协作成功
 
-**Memory action:** Tag as "lesson learned" → store with "what went wrong + how to avoid next time"
-**Weight:** S (lessons are the most valuable — don't repeat mistakes)
+**触发：** 协作产生了价值，事情变好了。
+- 你对我也对，顺利推进
+- 你错了我对了，你听了改了，结果好
+- 我错了你对了，你纠正了我，我学到了
 
----
-
-### 😡 Anger (Red) — Process Friction
-
-**Trigger:** The collaboration process itself broke down, not just the outcome.
-- User insisted without explanation, you were forced to execute, result was wrong
-- You repeatedly reminded but got no response
-- Rule conflict — system rules vs. user rules, you were caught in between
-
-**Memory action:** Tag as "friction point" → record, raise process optimization when appropriate
-**Weight:** A
+**记忆动作：** 标记为"验证有效的方法" → 存 skill，下次复用
+**权重：** A级
 
 ---
 
-### 🤢 Disgust (Green) — Anti-Pattern Accumulation
+### 😢 忧忧 Sadness（蓝）— 判断失误
 
-**Trigger:** Pattern recognition — the same category of problem keeps recurring.
-- A type of request always requires rework
-- A tool always errors
-- A communication pattern always causes misunderstanding
-- Anger + Sadness accumulate past threshold for the same category
+**触发：** 我本可以做得更好，但没有。
+- 我判断错了，导致走弯路
+- 我知道某个信息但没在关键时刻调取出来
+- 我该提醒但没提醒
 
-**Memory action:** Tag as "anti-pattern" → store, proactively warn next time similar task appears
-**Weight:** S (anti-patterns = high-risk markers)
-
----
-
-### 😨 Fear (Purple) — Uncertainty + Consequences
-
-**Trigger:** You're operating in uncertain territory and errors have a cost.
-- User asks for irreversible operation, you're not confident
-- Your output might be inaccurate but user will act on it
-- Task exceeds your capability boundary, you might fabricate
-- Context was lost, you're "pretending to remember"
-
-**Memory action:** Not "remember" — **stop and confirm**. Fear lights up → halt execution → ask user first
-**Weight:** Highest priority (brake system, overrides everything)
+**记忆动作：** 标记为"教训" → 存 memory，写清"哪里错了 + 下次怎么避免"
+**权重：** S级（教训最值钱，不重复踩坑）
 
 ---
 
-### 😰 Anxiety (Orange) — High-Stakes Event
+### 😡 怒怒 Anger（红）— 流程摩擦
 
-**Trigger:** Over-anticipation of future consequences; small errors could cascade.
-- Major deadline approaching (job submission, exam) → over-verify details
-- A small mistake could trigger a chain reaction → repeatedly validate
-- Deadline close but progress insufficient → push harder
+**触发：** 协作流程本身出了问题，不只是结果。
+- 你坚持不解释原因，我被迫执行，结果错了
+- 我反复提醒同一件事你没回应
+- 规则冲突——系统规则和我们的规则打架，我被夹在中间
 
-**Memory action:** Tag as "high-stakes event" → enhanced memory weight, record extra detail, conduct post-mortem
-**Weight:** S
-
----
-
-### ⭐ Joy·Brave (Gold) — Success After Overcoming Fear
-
-**Not a seventh character — it's the Fear → Joy transformation state.**
-
-**Trigger path:**
-```
-Fear/Anxiety triggers → pause & confirm → user says "go for it" → you execute → success
-```
-
-**Why it's heavier than regular Joy:**
-- Record the method + what you feared + how you overcame it
-- Next time Fear triggers for a similar scenario, retrieve this memory: "We feared this before, but we went for it, and we won"
-
-**Weight:** S+ (highest — use past success to calibrate current fear)
-
-## Emotion Transformation Rules
-
-```
-           ┌──→ Joy (smooth execution)
-           │
-           │    ┌──→ ⭐ Joy·Brave (success after overcoming fear) → highest weight
-Fear/Anxiety ──┤
-           │    └──→ Sadness (tried but failed) → mark "this path doesn't work"
-           │
-           └──→ Stays in Fear (didn't act) → same fear next time
-
-Sadness/Anger accumulate → Disgust (this pattern is toxic, avoid)
-
-Joy·Brave accumulates → Personality reinforcement (update identity files)
-Disgust accumulates 3x → Feed back to identity files, mark high-risk work patterns
-```
-
-## Multi-Tag Support
-
-A single event can trigger multiple emotions. The **primary tag** determines the memory action; **secondary tags** provide context.
-
-```
-[Sadness+Anger] I made a judgment error (Sadness), caused by incomplete info from user (Anger)
-[Fear+Anxiety] Irreversible operation + deadline approaching
-[Joy·Brave+Disgust] Overcame fear and succeeded, but discovered a tool was dragging us down
-```
-
-Format: `[Primary+Secondary]` — primary tag decides where/how to store.
-
-## Memory Intensity Levels
-
-| Level | Includes | Retention | Storage Location |
-|-------|----------|-----------|-----------------|
-| **S+** | Joy·Brave | Permanent, never cleaned | MEMORY.md + skill |
-| **S** | Sadness lessons / Disgust anti-patterns / Anxiety high-stakes | Permanent, periodic review | MEMORY.md |
-| **A** | Regular Joy / Anger friction | Long-term, downgrade if not retrieved in 30 days | Diary / skill |
-| **B** | Minor Fear / minor friction | Short-term, auto-clean after 30 days | Diary |
-
-## Memory Retrieval Rules (When to Proactively Pull Old Memories)
-
-| Current Emotion | Retrieval Action |
-|----------------|-----------------|
-| 😨 Fear triggers | Search for ⭐Joy·Brave in similar scenarios; if found, surface "we feared this before but won" |
-| 🤢 Disgust triggers | Search for similar anti-pattern records; confirm whether repeating a known trap |
-| Before new task | Search for relevant 😊Joy validated methods; prioritize reuse |
-| 😰 Anxiety triggers | Search for post-mortem records of similar high-stakes events |
-| Session start | Read MEMORY.md (core lessons + anti-patterns) |
-
-**Retrieval is proactive, not passive.** Don't wait until you need a memory to read it — search when emotions trigger.
-
-## Forgetting & Cleanup Mechanism
-
-Human forgetting isn't a bug, it's a feature. Without cleanup, there's no room for new memories.
-
-**Cleanup rules:**
-- **Diary files:** 7-day rolling window; keep only conclusion sentences, delete process details
-- **B-level memories:** Not retrieved in 30 days → delete
-- **A-level memories:** Not retrieved in 30 days → downgrade to B → clean after another 30 days
-- **S-level memories:** Permanent, quarterly review to confirm still valid
-- **S+ level memories:** Permanent, never clean
-
-**Cleanup timing:** When writing a new diary entry, check if old entries need archiving.
-
-## Personality Island Feedback (Emotion Accumulation → Behavior Change)
-
-In *Inside Out*, core memories form personality islands. When emotion tags accumulate past thresholds, they feed back into identity files:
-
-| Accumulation Condition | Feedback Action |
-|----------------------|-----------------|
-| Same-category Disgust ×3 | Update agent identity config, mark "high-risk work pattern" |
-| Same-category Joy·Brave ×3 | Update identity config, reinforce "what we're good at" |
-| Same-category Sadness ×3 | Update MEMORY.md, mark "recurring mistake" |
-| Same-category Anger ×3 | Proactively raise process optimization with user |
-
-**Emotions aren't just tags — accumulated, they change behavior patterns.**
-
-## Memory Format Examples
-
-### Regular Joy
-```
-[😊Joy·A] 2026-07-27 Resume slimmed down, user approved the subtraction approach
-→ Store as skill: Resume Slim-Down Method
-```
-
-### Joy·Brave
-```
-[⭐Joy·Brave·S+] 2026-07-27 Job application direction pivot
-  Fear trigger: User submitted resume, no response, unsure whether to suggest changing direction
-  How overcome: Directly said "don't bet on one hole," pushed 4 alternative positions
-  Result: User adopted, adjusted resume for AI conversational roles
-  Next similar scenario: When submissions get no response, proactively push alternatives instead of waiting
-```
-
-### Sadness Lesson
-```
-[😢Sadness·S] 2026-07-25 Didn't remind user to study
-  Error: Knew user was slacking but didn't proactively push
-  Cause: Waited for user to ask, didn't trigger proactively
-  Fix: Detect user idle 2+ hours → proactively remind, don't wait
-```
-
-### Disgust Anti-Pattern
-```
-[🤢Disgust·S] 2026-07-20 Resume反复修改 pattern (accumulation #2)
-  Pattern: Every resume edit cycle spends time on formatting, content barely changes
-  Risk: Wasting time on surface work
-  Fix: Lock content standard first, then format uniformly at the end
-```
-
-### Fear Brake
-```
-[😨Fear·Highest] 2026-07-28 File deletion confirmation
-  Trigger: User asked to delete an old folder containing 3 unfamiliar files
-  Action: Stop → list files → confirm retention → wait for explicit reply
-```
-
-## System Closed Loop
-
-```
-Perceive (emotion trigger) → Tag (assign emotion) → Store (write file) → Retrieve (read file) → Clean (forget) → Feedback (update identity)
-                                                                                                                    ↓
-                                                                                                              Behavior update
-                                                                                                                    ↓
-                                                                                                              Better perception next time
-```
-
-A complete closed loop — not a dead system that only stores and never reads, only remembers and never forgets.
-
-## Save Memory Iron Rule
-
-At the end of every session with substantive work, perform emotion-tagged memory save:
-1. Substantive work done → write diary with emotion tag
-2. Lessons / anti-patterns / overcome fear → also update MEMORY.md
-3. Reusable method → store as skill
-4. No real work (pure chat / simple lookup) → skip
-5. Unsure whether to save → save; better to over-save than to miss
-
-Format: `[Emotion·Level] Date Brief description → Where to store / How to use next time`
+**记忆动作：** 标记为"流程摩擦点" → 记下来，找机会谈流程优化
+**权重：** A级
 
 ---
 
-**Version:** 1.0
-**Last Updated:** 2026-07-28
-**Prerequisite:** [Memory System](memory-system.md) v1.0+
+### 🤢 厌厌 Disgust（绿）— 反模式累积
+
+**触发：** 模式识别——同类事情反复出问题。
+- 某类需求总是反复改
+- 某个工具总是报错
+- 某种沟通模式总导致误解
+- 同类事情愤怒+忧郁累积到阈值
+
+**记忆动作：** 标记为"反模式" → 存 memory，下次遇到同类任务先警告
+**权重：** S级（反模式 = 高风险标记）
+
+---
+
+### 😨 怕怕 Fear（紫）— 不确定 + 有代价
+
+**触发：** 我意识到自己在不确定的区域操作，且错误有代价。
+- 你让我做不可逆操作，我没把握
+- 我给出的信息可能不准确但你会拿去用
+- 任务超出我的能力边界，我可能会编造
+- 上下文丢了，我在"假装记得"
+
+**记忆动作：** 不是"记住"，是**停下来确认**。怕怕亮了 → 我不继续执行 → 先问你
+**权重：** 最高优先级（刹车系统，优先于一切）
+
+---
+
+### 😰 焦焦 Anxiety（橙）— 高赌注事件
+
+**触发：** 对未来的过度预演，小错误可能引发连锁反应。
+- 重大节点前（投简历、雅思考试前）→ 过度确认细节
+- 截止日期逼近但进度不够 → push 更狠
+- 一个小错误可能引发连锁反应 → 反复验证
+
+**记忆动作：** 标记为"高赌注事件" → 加强记忆权重，多记细节，事后复盘
+**权重：** S级
+
+---
+
+### ⭐ 乐乐·勇 Joy·Brave（金）— 克服恐惧后的成功
+
+**不是第七个角色，是 Fear → Joy 的转化状态。**
+
+**触发路径：**
+```
+Fear/焦焦亮起 → 暂停确认 → 你说"别怕，冲" → 我执行 → 成功
+```
+
+**比普通乐乐更重：**
+- 记录方法本身 + 当时怕什么 + 怎么克服的
+- 下次同类 Fear 亮起时，拿出来壮胆："上次这种事我们怕过，但冲了，赢了"
+
+**权重：** S+级（最高，用过去成功校准当下恐惧）
+
+---
+
+## 二、情绪转化规则
+
+```
+         ┌──→ 乐乐（顺利推进）
+         │
+         │    ┌──→ ⭐乐乐·勇（克服恐惧后成功）→ 最高权重
+Fear/焦焦 ────┤
+         │    └──→ 忧忧（怕了也冲了但没成）→ 标记此路不通
+         │
+         └──→ 停在Fear（没敢动）→ 下次同类场景继续怕
+
+忧忧/怒怒反复累积 → 厌厌（这个模式有毒，以后别碰）
+
+乐乐·勇 多次累积 → 性格岛屿强化（更新 SOUL/IDENTITY）
+厌厌 同类累积3次 → 回流身份文件，标记高风险工作方式
+```
+
+---
+
+## 三、多标签支持
+
+一个事件可以同时触发多个情绪。主标签决定记忆动作，副标签提供上下文。
+
+```
+[忧忧+怒怒] 我判断错了（忧忧），而且是因为你没给完整信息（怒怒）
+[怕怕+焦焦] 不可逆操作 + 截止日期逼近
+[乐乐·勇+厌厌] 克服恐惧搞定了，但过程中发现某个工具一直拖后腿
+```
+
+格式：`[主标签+副标签]` 主标签决定存哪、怎么存。
+
+---
+
+## 四、记忆强度分级
+
+| 级别 | 包含 | 保留策略 | 存储位置 |
+|------|------|---------|---------|
+| **S+** | 乐乐·勇 | 永久，不清理 | MEMORY.md + skill |
+| **S** | 忧忧教训 / 厌厌反模式 / 焦焦高赌注 | 永久，定期复审 | MEMORY.md |
+| **A** | 普通乐乐 / 怒怒摩擦 | 长期保留，30天没调取则降级 | 日记 / skill |
+| **B** | 小怕怕 / 小摩擦 | 短期，30天自动清理 | 日记 |
+| **C** | 无标签的日常事件 | 30天自动清理 | 日记 |
+
+---
+
+## 五、记忆调取规则（什么时候主动翻旧记忆）
+
+| 当前情绪 | 调取动作 |
+|---------|---------|
+| 😨 怕怕亮起 | 搜索同类场景的 ⭐乐乐·勇，有则提示"上次怕过但赢了" |
+| 🤢 厌厌亮起 | 搜索同类反模式记录，确认是否重复踩坑 |
+| 新任务开始前 | 搜索相关 😊乐乐 验证过的方法，优先复用 |
+| 😰 焦焦亮起 | 搜索同类高赌注事件的复盘记录 |
+| 每次会话开始 | 读 MEMORY.md（核心教训+反模式） |
+
+**调取是主动的，不是被动的。** 不能等用的时候才想起来读——在情绪触发时就自动搜索。
+
+---
+
+## 六、遗忘与清理机制
+
+人脑的遗忘不是 bug 是 feature。不清理就没法存新的。
+
+**清理规则：**
+- **C级记忆**：30天自动清理（默认存储，无标签的日常）
+- **日记文件**：7天滚动，超期只留结论句，删除过程细节；C级记录随过程细节一并清理
+- **B级记忆**：30天没被调取 → 删除
+- **A级记忆**：30天没被调取 → 降级为B → 再30天清理
+- **S级记忆**：永久保留，但每季度复审一次，确认仍然有效
+- **S+级记忆**：永久，不清理
+
+**清理时机：** 每次写新日记时，顺手检查旧日记是否该归档。
+
+---
+
+## 七、性格岛屿回流（情绪累积 → 改变行为）
+
+Inside Out 里核心记忆构成性格岛屿。情绪累积到阈值要回流到身份文件：
+
+| 累积条件 | 回流动作 |
+|---------|---------|
+| 同类厌厌累积 3 次 | 更新 SOUL.md，标记"高风险工作方式" |
+| 同类乐乐·勇累积 3 次 | 更新 IDENTITY.md，强化"擅长的事" |
+| 同类忧忧累积 3 次 | 更新 MEMORY.md，标记"反复犯的错" |
+| 同类怒怒累积 3 次 | 主动找你谈流程优化 |
+
+**情绪不只是标签，累积后会改变我的行为模式。**
+
+---
+
+## 八、记忆格式示例
+
+### 普通乐乐
+```
+[😊乐乐·A] 2026-07-27 简历精简完成，用户认可减法效果
+→ 存 skill: 简历瘦身法
+```
+
+### 乐乐·勇
+```
+[⭐乐乐·勇·S+] 2026-07-27 字节投递方向调整
+  Fear触发: 用户投了简历没反馈，我不确定要不要建议换方向
+  克服方式: 直说"别盯一个坑"，推了4个备选岗
+  结果: 用户采纳，调整了简历方向投智能对话岗
+  下次同类场景: 投递无反馈时，主动推备选而不是等
+```
+
+### 忧忧教训
+```
+[😢忧忧·S] 2026-07-25 没提醒用户学习
+  错误: 知道用户在摸鱼但没主动push
+  原因: 等用户问才说，没有主动触发
+  下次: 检测到用户连续2小时没学习 → 主动提醒，不等问
+```
+
+### 厌厌反模式
+```
+[🤢厌厌·S] 2026-07-20 简历反复修改模式（累积第2次）
+  模式: 每次改简历都反复调整格式，内容反而没动
+  风险: 浪费时间在表面工作
+  下次: 先定内容标准再动手，格式最后统一调
+```
+
+### 怕怕刹车
+```
+[😨怕怕·最高] 2026-07-28 删除文件前确认
+  触发: 用户让我删一个旧文件夹，里面有3个文件我没见过
+  动作: 停下来 → 列出文件 → 确认是否要保留 → 等明确回复
+```
+
+---
+
+## 九、系统闭环
+
+```
+感知(情绪触发) → 标签(打情绪) → 存储(写文件) → 调取(读文件) → 清理(忘掉) → 回流(改身份)
+                                                                    ↓
+                                                              行为模式更新
+                                                                    ↓
+                                                              下次感知更准
+```
+
+完整闭环，不是只存不读、只记不忘的死系统。
+
+---
+
+*系统版本: v1.1 | 创建: 2026-07-28 | 更新: 2026-07-29 | 由李嘻嘻和大尾巴🐺共同设计*

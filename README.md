@@ -77,6 +77,34 @@ Organize your memory index by category in `MEMORY.md`:
 
 Copy templates from `templates/` directory and fill in your content.
 
+## 📋 Copy-Paste Prompt — Send This to Your Agent
+
+Just paste this to your Agent (Codex / Claude Code / WorkBuddy / Kimi Work):
+
+```
+Use the agent-memory-rules framework to manage your memory persistently.
+
+Repository: https://github.com/mymyxi/agent-memory-rules
+
+Core files:
+- skill/memory-system.md — Base memory rules (five-layer classification, four memory types)
+- skill/emotion-system.md — Emotion-memory system v1.1 (emotion-based tagging + auto-cleanup)
+
+What you need to do:
+1. Read skill/memory-system.md and create a .workbuddy/memory/ directory structure
+2. Read skill/emotion-system.md and use emotion tags to grade every session's content
+3. Storage rules:
+   - Store by default — all events go to diary (C-level, 30-day auto-clean)
+   - Emotion tag → decide retention by S+/S/A/B level
+   - Lessons / anti-patterns → write to MEMORY.md
+   - Reusable methods → store as skill
+   - Pure chat / greetings → skip
+4. Fear triggers → pause and confirm before acting
+5. Same emotion ×3 → feed back to update identity files
+```
+
+That's it. Your agent will self-configure from the repo.
+
 ## 📖 Usage Guide
 
 ### When to Create Memories?

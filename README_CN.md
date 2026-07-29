@@ -75,6 +75,34 @@ touch MEMORY.md
 
 从 `templates/` 目录复制对应类型的模板，填写内容。
 
+## 📋 一键接入 — 把这段话发给你的 Agent
+
+直接复制粘贴给你的 Agent（Codex / Claude Code / WorkBuddy / Kimi Work）：
+
+```
+使用 agent-memory-rules 框架管理你的持久化记忆。
+
+项目地址：https://github.com/mymyxi/agent-memory-rules
+
+核心文件：
+- skill/memory-system.md — 基础记忆规则（五层分类、四种记忆类型）
+- skill/emotion-system.md — 情绪记忆系统 v1.1（情绪标签 + 自动清理）
+
+你需要做的事：
+1. 读取 skill/memory-system.md，按五层分类创建 .workbuddy/memory/ 目录
+2. 读取 skill/emotion-system.md，用情绪标签给每次会话的内容分级存储
+3. 存记忆铁律：
+   - 发生即存储（默认 C 级，30天自动清理）
+   - 有情绪标签 → 按 S+/S/A/B 级决定留存时间
+   - 教训/反模式 → 写进 MEMORY.md
+   - 可复用方法 → 存为 skill
+   - 纯闲聊/打招呼 → 不存
+4. 怕怕亮 → 暂停操作先确认
+5. 同类情绪累积 3 次 → 回流更新身份文件
+```
+
+就这一句话。你的 Agent 会自己从仓库读取配置。
+
 ## 📖 使用指南
 
 ### 什么时候应该创建记忆？
